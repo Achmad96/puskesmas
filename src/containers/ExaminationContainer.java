@@ -2,7 +2,7 @@ package src.containers;
 
 import src.App;
 import src.enums.LoggingType;
-import src.helper.ExaminationHelper;
+import src.utils.ExaminationHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static src.helper.LoggingHelper.logln;
+import static src.utils.LoggingUtil.logln;
 
 public class ExaminationContainer implements ActionListener {
 
@@ -62,7 +62,7 @@ public class ExaminationContainer implements ActionListener {
     public void getAllExaminationsFromDB() {
         try {
             dataList.clear();
-            final ResultSet examinationData = examinationHelper.getAllExaminations();
+            final ResultSet examinationData = examinationHelper.getAllData();
             while (examinationData.next()) {
                 final String[] row = new String[] {
                         examinationData.getString("id_pemeriksaan"),
@@ -97,24 +97,24 @@ public class ExaminationContainer implements ActionListener {
             App.getInstance().backToHome();
         } else if(e.getSource() == addButton) {
             final HashMap<String, String> insertOptions = this.getOptions();
-            examinationHelper.insertExamination(id_pemeriksaanField.getText().trim(), insertOptions);
+            examinationHelper.insertData(id_pemeriksaanField.getText().trim(), insertOptions);
             this.getAllExaminationsFromDB();
             this.refreshModel();
         } else if (e.getSource() == removeButton) {
             if (id_pemeriksaanField.getText().trim().isEmpty()) {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
-                examinationHelper.removeExamination(id_pemeriksaan);
+                examinationHelper.deleteData(id_pemeriksaan);
             } else {
-                examinationHelper.removeExamination(id_pemeriksaanField.getText().trim());
+                examinationHelper.deleteData(id_pemeriksaanField.getText().trim());
             }
             this.getAllExaminationsFromDB();
             this.refreshModel();
         } else if (e.getSource() == updateButton) {
             if (id_pemeriksaanField.getText().trim().isEmpty()) {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
-                examinationHelper.updateExamination(id_pemeriksaan, this.getOptions());
+                examinationHelper.updateData(id_pemeriksaan, this.getOptions());
             } else {
-                examinationHelper.updateExamination(id_pemeriksaanField.getText().trim(),this.getOptions());
+                examinationHelper.updateData(id_pemeriksaanField.getText().trim(),this.getOptions());
             }
             this.getAllExaminationsFromDB();
             this.refreshModel();

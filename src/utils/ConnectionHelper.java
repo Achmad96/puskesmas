@@ -1,4 +1,4 @@
-package src.helper;
+package src.utils;
 
 import src.enums.LoggingType;
 
@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static src.helper.LoggingHelper.logln;
+import static src.utils.LoggingUtil.logln;
 
 public class ConnectionHelper {
 

@@ -1,7 +1,7 @@
 package src.containers;
 
 import src.App;
-import src.helper.BookingHelper;
+import src.utils.BookingHelper;
 import src.enums.LoggingType;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static src.helper.LoggingHelper.logln;
+import static src.utils.LoggingUtil.logln;
 
 public class BookingContainer implements ActionListener {
     private JPanel bookingPanel;
@@ -49,7 +49,7 @@ public class BookingContainer implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addButton) {
-            bookingHelper.insertNumber(inputField.getText().trim());
+            bookingHelper.insertData(inputField.getText().trim());
             inputField.setText("");
             this.getAllPatientsFromDB();
             this.refreshModel();
@@ -60,7 +60,7 @@ public class BookingContainer implements ActionListener {
             this.refreshModel();
             logln("Patient found", LoggingType.DEBUG);
         } else if (e.getSource() == clearButton) {
-            bookingHelper.clearAllPasien();
+            bookingHelper.clearAllData();
             this.getAllPatientsFromDB();
             this.refreshModel();
             logln("Sucessfully cleared all patients", LoggingType.DEBUG);
@@ -72,7 +72,7 @@ public class BookingContainer implements ActionListener {
     public void getAllPatientsFromDB() {
         try {
             dataList.clear();
-            final ResultSet patients = bookingHelper.getAllPasien();
+            final ResultSet patients = bookingHelper.getAllData();
             while (patients.next()) {
                 final String[] row = new String[] {
                     patients.getString("nomor_antrian"),
@@ -89,7 +89,7 @@ public class BookingContainer implements ActionListener {
     public void getPatientById(String patientId) {
         try {
             dataList.clear();
-            final ResultSet patient = bookingHelper.getPasienById(patientId);
+            final ResultSet patient = bookingHelper.getDataById(patientId);
             if (patient.next()) {
                 final String[] row = new String[] {
                         patient.getString("nomor_antrian"),

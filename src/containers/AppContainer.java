@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static src.helper.LoggingHelper.logln;
+import static src.utils.LoggingUtil.logln;
 
 public class AppContainer implements ActionListener {
 

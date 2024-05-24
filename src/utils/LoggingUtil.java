@@ -1,8 +1,8 @@
-package src.helper;
+package src.utils;
 
 import src.enums.LoggingType;
 
-public class LoggingHelper {
+public class LoggingUtil {
     public static final String ANSI_WHITE = "\u001B[97m";
     private static final String ANSI_RED = "\u001B[31m";
     private static final String[] prefixes = {

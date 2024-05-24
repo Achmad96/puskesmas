@@ -1,4 +1,4 @@
-package src.helper;
+package src.utils;
 
 import src.enums.LoggingType;
 
@@ -8,39 +8,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static src.helper.LoggingHelper.logln;
+import static src.utils.LoggingUtil.logln;
 
 public class ExaminationHelper {
     private final Connection connection = ConnectionHelper.getConnectionHelper().getConnection();
 
-    public ResultSet getAllExaminations() {
-        try {
-            final String sql =
-                    "SELECT * FROM pemeriksaan " +
-                    "INNER JOIN public.pasien p on p.id = pemeriksaan.id_pasien";
-            final PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            return preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void insertExamination(String examinationId, HashMap<String,String> insertOptions){
+    public void insertData(String examinationId, HashMap<String,String> dataOptions){
         try {
             final StringBuilder stringBuilder = new StringBuilder(
                     "INSERT INTO pemeriksaan" +
                     " (id_pemeriksaan, ");
-            insertOptions.keySet().forEach(k -> stringBuilder.append(k).append(", "));
+            dataOptions.keySet().forEach(k -> stringBuilder.append(k).append(", "));
             stringBuilder.setLength(stringBuilder.length() - 2);
             stringBuilder.append(") VALUES (");
-            insertOptions.forEach((_, _) -> stringBuilder.append("?, "));
+            dataOptions.forEach((_, _) -> stringBuilder.append("?, "));
             stringBuilder.append("?)");
 
             final String sql = stringBuilder.toString();
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, examinationId);
             int i = 2;
-            for (String value : insertOptions.values()) {
+            for (String value : dataOptions.values()) {
                 preparedStatement.setObject(i++, value);
             }
 
@@ -51,7 +39,7 @@ public class ExaminationHelper {
         }
     }
 
-    public void updateExamination(String examinationId, HashMap<String, String> updateOptions) {
+    public void updateData(String examinationId, HashMap<String, String> updateOptions) {
         try {
             final StringBuilder stringBuilder = new StringBuilder("UPDATE pemeriksaan SET ");
             updateOptions.forEach((key, value) -> {
@@ -77,7 +65,19 @@ public class ExaminationHelper {
         }
     }
 
-    public void removeExamination(String examinationId){
+    public ResultSet getAllData() {
+        try {
+            final String sql =
+                    "SELECT * FROM pemeriksaan " +
+                            "INNER JOIN public.pasien p on p.id = pemeriksaan.id_pasien";
+            final PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            return preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteData(String examinationId){
         try {
             final String sql = "DELETE FROM pemeriksaan WHERE id_pemeriksaan = ?";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -87,5 +87,4 @@ public class ExaminationHelper {
             logln(e.getMessage(), LoggingType.ERROR);
         }
     }
-
 }
