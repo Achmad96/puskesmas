@@ -43,7 +43,7 @@ public class ExaminationContainer implements ActionListener {
     public ExaminationContainer() {
         this.examinationHelper = new ExaminationHelper();
         this.initializeEvents();
-        this.getAllExaminationsFromDB();
+        this.getAllData();
         this.refreshModel();
     }
 
@@ -59,11 +59,32 @@ public class ExaminationContainer implements ActionListener {
         return examinationPanel;
     }
 
-    public void getAllExaminationsFromDB() {
+    public void getAllData() {
         try {
             dataList.clear();
             final ResultSet examinationData = examinationHelper.getAllData();
             while (examinationData.next()) {
+                final String[] row = new String[] {
+                        examinationData.getString("id_pemeriksaan"),
+                        examinationData.getString("id_nakes"),
+                        examinationData.getString("id_pasien"),
+                        examinationData.getString("keluhan"),
+                        examinationData.getString("diagnosis"),
+                        examinationData.getString("tindakan"),
+                        examinationData.getString("resep_obat"),
+                };
+                dataList.add(row);
+            }
+        } catch (SQLException e) {
+            logln(e.getMessage(), LoggingType.ERROR);
+        }
+    }
+
+    public void getDataById(String examinationId) {
+        try {
+            dataList.clear();
+            final ResultSet examinationData = examinationHelper.getDataById(examinationId);
+            if (examinationData.next()) {
                 final String[] row = new String[] {
                         examinationData.getString("id_pemeriksaan"),
                         examinationData.getString("id_nakes"),
@@ -95,11 +116,13 @@ public class ExaminationContainer implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == backButton) {
             App.getInstance().backToHome();
-        } else if(e.getSource() == addButton) {
+            return;
+        }
+
+        if(e.getSource() == addButton) {
             final HashMap<String, String> insertOptions = this.getOptions();
             examinationHelper.insertData(id_pemeriksaanField.getText().trim(), insertOptions);
-            this.getAllExaminationsFromDB();
-            this.refreshModel();
+            this.getAllData();
         } else if (e.getSource() == removeButton) {
             if (!id_pemeriksaanField.getText().trim().isEmpty()) {
                 examinationHelper.deleteData(id_pemeriksaanField.getText().trim());
@@ -107,8 +130,7 @@ public class ExaminationContainer implements ActionListener {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
                 examinationHelper.deleteData(id_pemeriksaan);
             }
-            this.getAllExaminationsFromDB();
-            this.refreshModel();
+            this.getAllData();
         } else if (e.getSource() == updateButton) {
             if (id_pemeriksaanField.getText().trim().isEmpty()) {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
@@ -116,12 +138,18 @@ public class ExaminationContainer implements ActionListener {
             } else {
                 examinationHelper.updateData(id_pemeriksaanField.getText().trim(),this.getOptions());
             }
-            this.getAllExaminationsFromDB();
-            this.refreshModel();
+            this.getAllData();
         } else if (e.getSource() == findButton) {
-            this.examinationHelper.getDataById(this.id_pemeriksaanField.getText());
-            this.refreshModel();
+            this.getDataById(id_pemeriksaanField.getText().trim());
+            id_pemeriksaanField.setText("");
+            if (!dataList.isEmpty()) {
+                logln("Examination found", LoggingType.DEBUG);
+            } else {
+                this.getAllData();
+                logln("Examination not found", LoggingType.DEBUG);
+            }
         }
+        this.refreshModel();
     }
 
     private HashMap<String, String> getOptions() {

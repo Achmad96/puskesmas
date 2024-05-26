@@ -35,7 +35,7 @@ public class BookingContainer implements ActionListener {
         this.bookingHelper = new BookingHelper();
         intializeEvents();
 
-        this.getAllPatientsFromDB();
+        this.getAllData();
         this.refreshModel();
     }
 
@@ -48,34 +48,34 @@ public class BookingContainer implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == backButton) {
+            App.getInstance().backToHome();
+            return;
+        }
+
         if (e.getSource() == addButton) {
             bookingHelper.insertData(inputField.getText().trim());
             inputField.setText("");
-            this.getAllPatientsFromDB();
-            this.refreshModel();
+            this.getAllData();
             logln("Sucessfully added patient", LoggingType.DEBUG);
         } else if (e.getSource() == findButton) {
-            this.getPatientById(inputField.getText().trim());
+            this.getDataById(inputField.getText().trim());
             inputField.setText("");
             if (!dataList.isEmpty()) {
-                logln("Patient found", LoggingType.DEBUG);
-                this.refreshModel();
+                logln("Booking found", LoggingType.DEBUG);
             } else {
-                this.getAllPatientsFromDB();
-                this.refreshModel();
-                logln("Patient not found", LoggingType.DEBUG);
+                this.getAllData();
+                logln("Booking not found", LoggingType.DEBUG);
             }
         } else if (e.getSource() == clearButton) {
             bookingHelper.clearAllData();
-            this.getAllPatientsFromDB();
-            this.refreshModel();
+            this.getAllData();
             logln("Sucessfully cleared all patients", LoggingType.DEBUG);
-        } else if (e.getSource() == backButton) {
-            App.getInstance().backToHome();
         }
+        this.refreshModel();
     }
 
-    public void getAllPatientsFromDB() {
+    public void getAllData() {
         try {
             dataList.clear();
             final ResultSet patients = bookingHelper.getAllData();
@@ -92,7 +92,7 @@ public class BookingContainer implements ActionListener {
         }
     }
 
-    public void getPatientById(String patientId) {
+    public void getDataById(String patientId) {
         try {
             dataList.clear();
             final ResultSet patient = bookingHelper.getDataById(patientId);

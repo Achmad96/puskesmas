@@ -99,7 +99,10 @@ public class PayingContainer implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == backButton) {
             App.getInstance().backToHome();
-        } else if (e.getSource() == addButton) {
+            return;
+        }
+
+        if (e.getSource() == addButton) {
             if (id_pembayaranField.getText().trim().isEmpty()) {
                 String id_pembayaran = table.getValueAt(table.getSelectedRow(), 0).toString();
                 payingHelper.insertData(id_pembayaran, this.getOptions());
@@ -107,18 +110,17 @@ public class PayingContainer implements ActionListener {
                 payingHelper.insertData(this.id_pembayaranField.getText(), this.getOptions());
             }
             this.getAllData();
-            this.refreshModel();
         } else if (e.getSource() == findButton) {
             this.getPatientById(id_pembayaranField.getText().trim());
             id_pembayaranField.setText("");
             if (!dataList.isEmpty()) {
-                logln("Patient found", LoggingType.DEBUG);
+                logln("Paying found", LoggingType.DEBUG);
             } else {
                 this.getAllData();
-                logln("Patient not found", LoggingType.DEBUG);
+                logln("Paying not found", LoggingType.DEBUG);
             }
-            this.refreshModel();
         }
+        this.refreshModel();
 
     }
 
