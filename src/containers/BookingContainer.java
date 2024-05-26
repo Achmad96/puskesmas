@@ -29,7 +29,7 @@ public class BookingContainer implements ActionListener {
 
     private final List<String[]> dataList = new ArrayList<>();
 
-    private final String[] columns = {"nomor antrian", "id pasien", "tanggal pemesanan"};
+    private final String[] columns = {"NOMOR ANTRIAN", "ID PASIEN", "TANGGAL PEMESANAN"};
 
     public BookingContainer() {
         this.bookingHelper = new BookingHelper();
@@ -57,8 +57,14 @@ public class BookingContainer implements ActionListener {
         } else if (e.getSource() == findButton) {
             this.getPatientById(inputField.getText().trim());
             inputField.setText("");
-            this.refreshModel();
-            logln("Patient found", LoggingType.DEBUG);
+            if (!dataList.isEmpty()) {
+                logln("Patient found", LoggingType.DEBUG);
+                this.refreshModel();
+            } else {
+                this.getAllPatientsFromDB();
+                this.refreshModel();
+                logln("Patient not found", LoggingType.DEBUG);
+            }
         } else if (e.getSource() == clearButton) {
             bookingHelper.clearAllData();
             this.getAllPatientsFromDB();

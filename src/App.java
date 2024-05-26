@@ -12,7 +12,7 @@ public class App extends JFrame {
 
     public App () {
         appContainer = new AppContainer();
-        this.setTitle("Puskesmas Handler");
+        this.setTitle("Puskesmas");
         this.setContentPane(appContainer.getPanel());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();

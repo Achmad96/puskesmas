@@ -54,7 +54,7 @@ public class ExaminationHelper {
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             int i = 1;
             for (String value : updateOptions.values()) {
-                if(!value.trim().isEmpty()){
+                if (!value.trim().isEmpty()){
                     preparedStatement.setObject(i++, value);
                 }
             }
@@ -69,11 +69,25 @@ public class ExaminationHelper {
         try {
             final String sql =
                     "SELECT * FROM pemeriksaan " +
-                            "INNER JOIN public.pasien p on p.id = pemeriksaan.id_pasien";
+                    "INNER JOIN public.pasien p on p.id = pemeriksaan.id_pasien";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             return preparedStatement.executeQuery();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logln(e.getMessage(), LoggingType.ERROR);
+            return null;
+        }
+    }
+
+    public ResultSet getDataById(String id) {
+        try {
+            final String sql = "SELECT * FROM pemeriksaan WHERE id_pemeriksaan = ?";
+            final PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            preparedStatement.execute();
+            return preparedStatement.getResultSet();
+        } catch (SQLException e) {
+            logln(e.getMessage(), LoggingType.ERROR);
+            return null;
         }
     }
 
@@ -83,7 +97,7 @@ public class ExaminationHelper {
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, examinationId);
             preparedStatement.executeUpdate();
-        } catch (SQLException e){
+        } catch (Exception e){
             logln(e.getMessage(), LoggingType.ERROR);
         }
     }

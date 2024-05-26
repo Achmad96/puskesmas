@@ -16,7 +16,6 @@ import java.util.HashMap;
 import static src.utils.LoggingUtil.logln;
 
 public class ExaminationContainer implements ActionListener {
-
     private JPanel examinationPanel;
     private JTable table;
 
@@ -52,6 +51,7 @@ public class ExaminationContainer implements ActionListener {
         backButton.addActionListener(this);
         addButton.addActionListener(this);
         updateButton.addActionListener(this);
+        findButton.addActionListener(this);
         removeButton.addActionListener(this);
     }
 
@@ -101,11 +101,11 @@ public class ExaminationContainer implements ActionListener {
             this.getAllExaminationsFromDB();
             this.refreshModel();
         } else if (e.getSource() == removeButton) {
-            if (id_pemeriksaanField.getText().trim().isEmpty()) {
+            if (!id_pemeriksaanField.getText().trim().isEmpty()) {
+                examinationHelper.deleteData(id_pemeriksaanField.getText().trim());
+            } else {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
                 examinationHelper.deleteData(id_pemeriksaan);
-            } else {
-                examinationHelper.deleteData(id_pemeriksaanField.getText().trim());
             }
             this.getAllExaminationsFromDB();
             this.refreshModel();
@@ -117,6 +117,9 @@ public class ExaminationContainer implements ActionListener {
                 examinationHelper.updateData(id_pemeriksaanField.getText().trim(),this.getOptions());
             }
             this.getAllExaminationsFromDB();
+            this.refreshModel();
+        } else if (e.getSource() == findButton) {
+            this.examinationHelper.getDataById(this.id_pemeriksaanField.getText());
             this.refreshModel();
         }
     }

@@ -31,9 +31,9 @@ public class AppContainer implements ActionListener {
     }
 
     private void initializeEvents() {
-        assert this.bookingButton != null
-                && this.payingButton != null
-                && this.examinationButton != null;
+        assert  this.bookingButton != null &&
+                this.payingButton != null &&
+                this.examinationButton != null;
         this.examinationButton.addActionListener(this);
         this.bookingButton.addActionListener(this);
         this.payingButton.addActionListener(this);
