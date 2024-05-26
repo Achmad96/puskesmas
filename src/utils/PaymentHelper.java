@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class PayingHelper {
+public class PaymentHelper {
     private final Connection connection = ConnectionHelper.getConnectionHelper().getConnection();
 
-    public void insertData(String payingId, HashMap<String, String> dataOptions) {
+    public void insertData(String paymentId, HashMap<String, String> dataOptions) {
         try {
             final StringBuilder stringBuilder = new StringBuilder(
                     "INSERT INTO pembayaran_obat" +
@@ -26,7 +26,7 @@ public class PayingHelper {
 
             final String sql = stringBuilder.toString();
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, payingId);
+            preparedStatement.setString(1, paymentId);
 
             int i = 2;
             for (String value : dataOptions.values()) {
@@ -34,7 +34,7 @@ public class PayingHelper {
             }
 
             preparedStatement.executeUpdate();
-            logln("Paying inserted successfully", LoggingType.DEBUG);
+            logln("Payment inserted successfully", LoggingType.DEBUG);
         } catch (SQLException e) {
             logln(e.getMessage(), LoggingType.ERROR);
         }

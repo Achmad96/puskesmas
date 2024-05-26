@@ -2,7 +2,7 @@ package src.containers;
 
 import src.App;
 import src.enums.LoggingType;
-import src.utils.PayingHelper;
+import src.utils.PaymentHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -16,9 +16,9 @@ import java.util.List;
 
 import static src.utils.LoggingUtil.logln;
 
-public class PayingContainer implements ActionListener {
+public class PaymentContainer implements ActionListener {
 
-    private JPanel PayingPanel;
+    private JPanel PaymentPanel;
     private JTable table;
 
     private JButton findButton;
@@ -31,18 +31,18 @@ public class PayingContainer implements ActionListener {
     private JTextField id_obatField;
     private JTextField jumlah_obatField;
 
-    final PayingHelper payingHelper = new PayingHelper();
+    final PaymentHelper paymentHelper = new PaymentHelper();
     private final List<String[]> dataList = new ArrayList<>();
 
     private final String[] columns = {
             "ID PEMBAYARAN", "ID KASIR", "ID PASIEN",
             "ID OBAT", "JUMLAH OBAT"};
 
-    public JPanel getPayingPanel() {
-        return PayingPanel;
+    public JPanel getPaymentPanel() {
+        return PaymentPanel;
     }
 
-    public PayingContainer() {
+    public PaymentContainer() {
         this.initializeEvents();
         this.getAllData();
         this.refreshModel();
@@ -60,14 +60,14 @@ public class PayingContainer implements ActionListener {
     public void getAllData() {
         try {
             dataList.clear();
-            final ResultSet payingData = payingHelper.getAllData();
-            while (payingData.next()) {
+            final ResultSet paymentData = paymentHelper.getAllData();
+            while (paymentData.next()) {
                 final String[] row = new String[] {
-                        payingData.getString("id_pembayaran"),
-                        payingData.getString("id_kasir"),
-                        payingData.getString("id_pasien"),
-                        payingData.getString("id_obat"),
-                        payingData.getString("jumlah_obat"),
+                        paymentData.getString("id_pembayaran"),
+                        paymentData.getString("id_kasir"),
+                        paymentData.getString("id_pasien"),
+                        paymentData.getString("id_obat"),
+                        paymentData.getString("jumlah_obat"),
                 };
                 dataList.add(row);
             }
@@ -76,17 +76,17 @@ public class PayingContainer implements ActionListener {
         }
     }
 
-    public void getPatientById(String payingId) {
+    public void getPatientById(String paymentId) {
         try {
             dataList.clear();
-            final ResultSet payingData = payingHelper.getDataById(payingId);
-            if (payingData.next()) {
+            final ResultSet paymentData = paymentHelper.getDataById(paymentId);
+            if (paymentData.next()) {
                 final String[] row = new String[] {
-                        payingData.getString("id_pembayaran"),
-                        payingData.getString("id_kasir"),
-                        payingData.getString("id_pasien"),
-                        payingData.getString("id_obat"),
-                        payingData.getString("jumlah_obat"),
+                        paymentData.getString("id_pembayaran"),
+                        paymentData.getString("id_kasir"),
+                        paymentData.getString("id_pasien"),
+                        paymentData.getString("id_obat"),
+                        paymentData.getString("jumlah_obat"),
                 };
                 dataList.add(row);
             }
@@ -105,19 +105,19 @@ public class PayingContainer implements ActionListener {
         if (e.getSource() == addButton) {
             if (id_pembayaranField.getText().trim().isEmpty()) {
                 String id_pembayaran = table.getValueAt(table.getSelectedRow(), 0).toString();
-                payingHelper.insertData(id_pembayaran, this.getOptions());
+                paymentHelper.insertData(id_pembayaran, this.getOptions());
             } else {
-                payingHelper.insertData(this.id_pembayaranField.getText(), this.getOptions());
+                paymentHelper.insertData(this.id_pembayaranField.getText(), this.getOptions());
             }
             this.getAllData();
         } else if (e.getSource() == findButton) {
             this.getPatientById(id_pembayaranField.getText().trim());
             id_pembayaranField.setText("");
             if (!dataList.isEmpty()) {
-                logln("Paying found", LoggingType.DEBUG);
+                logln("Payment found", LoggingType.DEBUG);
             } else {
                 this.getAllData();
-                logln("Paying not found", LoggingType.DEBUG);
+                logln("Payment not found", LoggingType.DEBUG);
             }
         }
         this.refreshModel();

@@ -16,11 +16,11 @@ public class AppContainer implements ActionListener {
     private JPanel mainPanel;
     private JButton examinationButton;
     private JButton bookingButton;
-    private JButton payingButton;
+    private JButton paymentButton;
 
     private BookingContainer bookingContainer;
     private ExaminationContainer examinationContainer;
-    private PayingContainer payingContainer;
+    private PaymentContainer paymentContainer;
 
     public AppContainer() {
         initializeEvents();
@@ -32,11 +32,11 @@ public class AppContainer implements ActionListener {
 
     private void initializeEvents() {
         assert  this.bookingButton != null &&
-                this.payingButton != null &&
+                this.paymentButton != null &&
                 this.examinationButton != null;
         this.examinationButton.addActionListener(this);
         this.bookingButton.addActionListener(this);
-        this.payingButton.addActionListener(this);
+        this.paymentButton.addActionListener(this);
     }
 
     @Override
@@ -47,9 +47,9 @@ public class AppContainer implements ActionListener {
         } else if (e.getSource() == examinationButton) {
             this.selectFrame(MenuType.EXAMINATION);
             logln("Select Examination Frame", LoggingType.DEBUG);
-        } else if (e.getSource() == payingButton) {
-            this.selectFrame(MenuType.PAYING);
-            logln("Select Paying Frame", LoggingType.DEBUG);
+        } else if (e.getSource() == paymentButton) {
+            this.selectFrame(MenuType.PAYMENT);
+            logln("Select Payment Frame", LoggingType.DEBUG);
         }
     }
 
@@ -67,11 +67,11 @@ public class AppContainer implements ActionListener {
                 }
                 App.getInstance().setContentPane(examinationContainer.getExaminationPanel());
                 break;
-            case PAYING:
-                if (payingContainer == null) {
-                    payingContainer = new PayingContainer();
+            case PAYMENT:
+                if (paymentContainer == null) {
+                    paymentContainer = new PaymentContainer();
                 }
-                App.getInstance().setContentPane(payingContainer.getPayingPanel());
+                App.getInstance().setContentPane(paymentContainer.getPaymentPanel());
                 break;
         }
         App.getInstance().pack();
