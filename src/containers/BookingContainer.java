@@ -69,6 +69,7 @@ public class BookingContainer implements ActionListener {
             }
         } else if (e.getSource() == clearButton) {
             bookingHelper.deleteAllData();
+            bookingHelper.resetAutoIncrement();
             this.getAllData();
             logln("Sucessfully cleared all patients", LoggingType.DEBUG);
         }

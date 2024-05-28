@@ -6,8 +6,7 @@ import src.utils.ExaminationHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +14,23 @@ import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class ExaminationContainer implements ActionListener {
+public class ExaminationContainer implements ActionListener, MouseListener {
+    @Override public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
     private JPanel examinationPanel;
     private JTable table;
 
@@ -53,6 +68,8 @@ public class ExaminationContainer implements ActionListener {
         updateButton.addActionListener(this);
         findButton.addActionListener(this);
         removeButton.addActionListener(this);
+        table.addMouseListener(this);
+
     }
 
     public JPanel getExaminationPanel() {

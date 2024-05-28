@@ -57,6 +57,16 @@ public class BookingHelper implements Helper {
         }
     }
 
+    public void resetAutoIncrement() {
+        try {
+            final String sql = "ALTER SEQUENCE pemesanan_nomor_antrian_nomor_antrian_seq RESTART WITH 1";
+            final PreparedStatement ps = connection.prepareStatement(sql);
+            ps.execute();
+        } catch (SQLException e) {
+            logln(e.getMessage(), LoggingType.ERROR);
+        }
+    }
+
     @Override public void insertData(String id, HashMap<String, String> options) {}
 
     @Override public void updateData(String id, HashMap<String, String> options) {}

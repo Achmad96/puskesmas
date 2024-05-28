@@ -29,7 +29,6 @@ public class ExaminationHelper implements Helper {
             for (String value : dataOptions.values()) {
                 preparedStatement.setObject(i++, value);
             }
-
             preparedStatement.executeUpdate();
             logln("Examination inserted successfully", LoggingType.DEBUG);
         } catch (SQLException e) {

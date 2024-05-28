@@ -8,15 +8,14 @@ import java.sql.SQLException;
 
 import static src.utils.LoggingUtil.logln;
 
-public class ConnectionHelper {
-
+public class ConnectionUtil {
     private Connection connection;
-    private static final ConnectionHelper connectionHelper = new ConnectionHelper();
+    private static final ConnectionUtil connectionUtil = new ConnectionUtil();
+    private ConnectionUtil() {}
 
-    public static ConnectionHelper getConnectionHelper() {
-        return connectionHelper;
+    public static ConnectionUtil getConnectionUtil() {
+        return connectionUtil;
     }
-
     public Connection getConnection () {
         if (connection ==  null) {
             try {
