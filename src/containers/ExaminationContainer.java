@@ -14,22 +14,7 @@ import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class ExaminationContainer implements ActionListener, MouseListener {
-    @Override public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
+public class ExaminationContainer implements ActionListener {
 
     private JPanel examinationPanel;
     private JTable table;
@@ -68,7 +53,6 @@ public class ExaminationContainer implements ActionListener, MouseListener {
         updateButton.addActionListener(this);
         findButton.addActionListener(this);
         removeButton.addActionListener(this);
-        table.addMouseListener(this);
 
     }
 
@@ -136,25 +120,17 @@ public class ExaminationContainer implements ActionListener, MouseListener {
             return;
         }
 
-        if(e.getSource() == addButton) {
+        if (e.getSource() == addButton) {
             final HashMap<String, String> insertOptions = this.getOptions();
             examinationHelper.insertData(id_pemeriksaanField.getText().trim(), insertOptions);
             this.getAllData();
         } else if (e.getSource() == removeButton) {
-            if (!id_pemeriksaanField.getText().trim().isEmpty()) {
-                examinationHelper.deleteDataById(id_pemeriksaanField.getText().trim());
-            } else {
-                String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
-                examinationHelper.deleteDataById(id_pemeriksaan);
-            }
+            final String id_pemeriksaan = !id_pemeriksaanField.getText().trim().isEmpty() ? id_pemeriksaanField.getText().trim() : table.getValueAt(table.getSelectedRow(), 0).toString();
+            examinationHelper.deleteDataById(id_pemeriksaan);
             this.getAllData();
         } else if (e.getSource() == updateButton) {
-            if (id_pemeriksaanField.getText().trim().isEmpty()) {
-                String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
-                examinationHelper.updateData(id_pemeriksaan, this.getOptions());
-            } else {
-                examinationHelper.updateData(id_pemeriksaanField.getText().trim(),this.getOptions());
-            }
+            final String id_pemeriksaan = !id_pemeriksaanField.getText().trim().isEmpty() ? id_pemeriksaanField.getText().trim() : table.getValueAt(table.getSelectedRow(), 0).toString();
+            examinationHelper.updateData(id_pemeriksaan, this.getOptions());
             this.getAllData();
         } else if (e.getSource() == findButton) {
             this.getDataById(id_pemeriksaanField.getText().trim());

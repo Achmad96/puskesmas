@@ -103,12 +103,8 @@ public class PaymentContainer implements ActionListener {
         }
 
         if (e.getSource() == addButton) {
-            if (id_pembayaranField.getText().trim().isEmpty()) {
-                String id_pembayaran = table.getValueAt(table.getSelectedRow(), 0).toString();
-                paymentHelper.insertData(id_pembayaran, this.getOptions());
-            } else {
-                paymentHelper.insertData(this.id_pembayaranField.getText(), this.getOptions());
-            }
+            final String id_pembayaran = !id_pembayaranField.getText().trim().isEmpty() ? id_pembayaranField.getText().trim() : table.getValueAt(table.getSelectedRow(), 0).toString();
+            paymentHelper.insertData(id_pembayaran, this.getOptions());
             this.getAllData();
         } else if (e.getSource() == findButton) {
             this.getPatientById(id_pembayaranField.getText().trim());
