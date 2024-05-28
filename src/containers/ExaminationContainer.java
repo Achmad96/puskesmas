@@ -125,10 +125,10 @@ public class ExaminationContainer implements ActionListener {
             this.getAllData();
         } else if (e.getSource() == removeButton) {
             if (!id_pemeriksaanField.getText().trim().isEmpty()) {
-                examinationHelper.deleteData(id_pemeriksaanField.getText().trim());
+                examinationHelper.deleteDataById(id_pemeriksaanField.getText().trim());
             } else {
                 String id_pemeriksaan = table.getValueAt(table.getSelectedRow(), 0).toString();
-                examinationHelper.deleteData(id_pemeriksaan);
+                examinationHelper.deleteDataById(id_pemeriksaan);
             }
             this.getAllData();
         } else if (e.getSource() == updateButton) {

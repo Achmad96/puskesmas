@@ -1,8 +1,8 @@
 package src.utils;
 
+import src.Helper;
 import src.enums.LoggingType;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +10,9 @@ import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class PaymentHelper {
-    private final Connection connection = ConnectionHelper.getConnectionHelper().getConnection();
+public class PaymentHelper implements Helper {
 
-    public void insertData(String paymentId, HashMap<String, String> dataOptions) {
+    @Override public void insertData(String paymentId, HashMap<String, String> dataOptions) {
         try {
             final StringBuilder stringBuilder = new StringBuilder(
                     "INSERT INTO pembayaran_obat" +
@@ -40,7 +39,8 @@ public class PaymentHelper {
         }
     }
 
-    public ResultSet getAllData() {
+
+    @Override public ResultSet getAllData() {
         try {
             final String sql =
                     "SELECT * FROM pembayaran_obat " +
@@ -52,7 +52,7 @@ public class PaymentHelper {
         }
     }
 
-    public ResultSet getDataById(String id) {
+    @Override public ResultSet getDataById(String id) {
         try {
             final String sql = "SELECT * FROM pembayaran_obat WHERE id_pembayaran = ?";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -63,4 +63,12 @@ public class PaymentHelper {
             return null;
         }
     }
+
+    @Override public void updateData(String id, HashMap<String, String> options) {}
+
+    @Override public void deleteDataById(String id) {}
+
+    @Override public void deleteAllData() {}
+
+    @Override public void insertData(String id) {}
 }

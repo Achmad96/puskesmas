@@ -68,7 +68,7 @@ public class BookingContainer implements ActionListener {
                 logln("Booking not found", LoggingType.DEBUG);
             }
         } else if (e.getSource() == clearButton) {
-            bookingHelper.clearAllData();
+            bookingHelper.deleteAllData();
             this.getAllData();
             logln("Sucessfully cleared all patients", LoggingType.DEBUG);
         }
@@ -112,7 +112,7 @@ public class BookingContainer implements ActionListener {
     public void refreshModel() {
         final DefaultTableModel model = new DefaultTableModel();
         for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
+            model.addColumn(null, new Object[]{column_name});
         }
         for (String[] data : dataList) {
             model.addRow(data);

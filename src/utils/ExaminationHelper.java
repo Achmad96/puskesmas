@@ -1,8 +1,8 @@
 package src.utils;
 
+import src.Helper;
 import src.enums.LoggingType;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +10,8 @@ import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class ExaminationHelper {
-    private final Connection connection = ConnectionHelper.getConnectionHelper().getConnection();
-
-    public void insertData(String examinationId, HashMap<String,String> dataOptions){
+public class ExaminationHelper implements Helper {
+    @Override public void insertData(String examinationId, HashMap<String,String> dataOptions){
         try {
             final StringBuilder stringBuilder = new StringBuilder(
                     "INSERT INTO pemeriksaan" +
@@ -39,7 +37,7 @@ public class ExaminationHelper {
         }
     }
 
-    public void updateData(String examinationId, HashMap<String, String> updateOptions) {
+    @Override public void updateData(String examinationId, HashMap<String, String> updateOptions) {
         try {
             final StringBuilder stringBuilder = new StringBuilder("UPDATE pemeriksaan SET ");
             updateOptions.forEach((key, value) -> {
@@ -65,7 +63,7 @@ public class ExaminationHelper {
         }
     }
 
-    public ResultSet getAllData() {
+    @Override public ResultSet getAllData() {
         try {
             final String sql =
                     "SELECT * FROM pemeriksaan " +
@@ -78,7 +76,7 @@ public class ExaminationHelper {
         }
     }
 
-    public ResultSet getDataById(String id) {
+    @Override public ResultSet getDataById(String id) {
         try {
             final String sql = "SELECT * FROM pemeriksaan WHERE id_pemeriksaan = ?";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -91,7 +89,7 @@ public class ExaminationHelper {
         }
     }
 
-    public void deleteData(String examinationId){
+    @Override public void deleteDataById(String examinationId){
         try {
             final String sql = "DELETE FROM pemeriksaan WHERE id_pemeriksaan = ?";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -101,4 +99,8 @@ public class ExaminationHelper {
             logln(e.getMessage(), LoggingType.ERROR);
         }
     }
+
+    @Override public void deleteAllData() {}
+
+    @Override public void insertData(String id) {}
 }

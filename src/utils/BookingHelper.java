@@ -1,18 +1,17 @@
 package src.utils;
 
+import src.Helper;
 import src.enums.LoggingType;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static src.utils.LoggingUtil.logln;
 
-public class BookingHelper {
-    private final Connection connection = ConnectionHelper.getConnectionHelper().getConnection();
-
-    public void insertData(String id) {
+public class BookingHelper implements Helper {
+    @Override public void insertData(String id) {
         try {
             final String sql = "INSERT INTO pemesanan_nomor_antrian(id_pasien) VALUES (?)";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -23,17 +22,7 @@ public class BookingHelper {
         }
     }
 
-    public void clearAllData() {
-        try {
-            final String sql = "DELETE FROM pemesanan_nomor_antrian";
-            final PreparedStatement ps = connection.prepareStatement(sql);
-            ps.execute();
-        } catch (SQLException exception) {
-            logln(exception.getMessage(), LoggingType.ERROR);
-        }
-    }
-
-    public ResultSet getAllData() {
+    @Override public ResultSet getAllData() {
         try {
             final String sql = "SELECT * FROM pemesanan_nomor_antrian";
             final PreparedStatement ps = connection.prepareStatement(sql);
@@ -45,7 +34,17 @@ public class BookingHelper {
         }
     }
 
-    public ResultSet getDataById(String id) {
+    @Override public void deleteAllData() {
+        try {
+            final String sql = "DELETE FROM pemesanan_nomor_antrian";
+            final PreparedStatement ps = connection.prepareStatement(sql);
+            ps.execute();
+        } catch (SQLException exception) {
+            logln(exception.getMessage(), LoggingType.ERROR);
+        }
+    }
+
+    @Override public ResultSet getDataById(String id) {
         try {
             final String sql = "SELECT * FROM pemesanan_nomor_antrian WHERE id_pasien = ?";
             final PreparedStatement ps = connection.prepareStatement(sql);
@@ -57,4 +56,11 @@ public class BookingHelper {
             return null;
         }
     }
+
+    @Override public void insertData(String id, HashMap<String, String> options) {}
+
+    @Override public void updateData(String id, HashMap<String, String> options) {}
+
+    @Override public void deleteDataById(String id) {}
+
 }
