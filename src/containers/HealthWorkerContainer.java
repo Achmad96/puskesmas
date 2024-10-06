@@ -23,7 +23,6 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
     private JTextField idField;
     private JTextField namaField;
     private JTextField umurField;
-    private JTextField jenisKelaminField;
     private JTextField noTeleponField;
 
     private JComboBox poliComboBox;
@@ -34,7 +33,6 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
     private JButton backButton;
     private JButton updateButton;
     private JButton removeButton;
-    private JLabel title;
     private JRadioButton lakiLakiRadioButton;
     private JRadioButton perempuanRadioButton;
 

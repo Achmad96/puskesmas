@@ -32,7 +32,6 @@ public class PatientContainer implements ActionListener, ListSelectionListener {
     private JButton updateButton;
     private JRadioButton lakiLakiRadioButton;
     private JRadioButton perempuanRadioButton;
-    private JLabel title;
 
     private final PatientHelper patientHelper = new PatientHelper();
     private final ButtonGroup buttonGroup = new ButtonGroup();

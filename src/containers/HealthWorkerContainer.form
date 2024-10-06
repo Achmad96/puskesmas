@@ -142,7 +142,7 @@
           <text value="remove"/>
         </properties>
       </component>
-      <component id="1ec46" class="javax.swing.JLabel" binding="title">
+      <component id="1ec46" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

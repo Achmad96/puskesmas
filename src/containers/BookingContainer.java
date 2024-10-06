@@ -23,7 +23,6 @@ public class BookingContainer implements ActionListener {
     private JComboBox<String> bookingComboBox;
 
     private final String[] columns = {"NOMOR ANTRIAN", "ID PASIEN", "NAMA PASIEN", "TANGGAL PEMESANAN"};
-    private DefaultTableModel tableModel;
 
     private final BookingHelper bookingHelper = new BookingHelper();
     private final ArrayList<String[]> dataList = new ArrayList<>();

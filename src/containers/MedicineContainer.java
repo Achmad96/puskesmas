@@ -28,7 +28,6 @@ public class MedicineContainer implements ActionListener, ListSelectionListener 
     private JButton addButton;
     private JButton removeButton;
     private JButton updateButton;
-    private JLabel title;
 
     private final MedicineHelper medicineHelper = new MedicineHelper();
     private final ArrayList<String[]> dataList = new ArrayList<>();
