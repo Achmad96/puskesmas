@@ -1,8 +1,7 @@
 package src.containers;
 
 import src.App;
-import src.utils.BookingHelper;
-import src.enums.LoggingType;
+import src.helpers.BookingHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,32 +10,31 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-
-import static src.utils.LoggingUtil.logln;
 
 public class BookingContainer implements ActionListener {
     private JPanel bookingPanel;
-    private JTextField inputField;
+    private JTextField idPatientField;
     private JTable table;
 
     private JButton clearButton;
     private JButton findButton;
     private JButton addButton;
     private JButton backButton;
+    private JComboBox<String> bookingComboBox;
 
-    private final BookingHelper bookingHelper;
+    private final String[] columns = {"NOMOR ANTRIAN", "ID PASIEN", "NAMA PASIEN", "TANGGAL PEMESANAN"};
+    private DefaultTableModel tableModel;
 
-    private final List<String[]> dataList = new ArrayList<>();
+    private final BookingHelper bookingHelper = new BookingHelper();
+    private final ArrayList<String[]> dataList = new ArrayList<>();
+    private final ArrayList<String[]> patientsList = new ArrayList<>();
 
-    private final String[] columns = {"NOMOR ANTRIAN", "ID PASIEN", "TANGGAL PEMESANAN"};
 
     public BookingContainer() {
-        this.bookingHelper = new BookingHelper();
+        initializeComboBox();
         intializeEvents();
-
         this.getAllData();
-        this.refreshModel();
+        this.refreshTableModel();
     }
 
     public void intializeEvents() {
@@ -44,79 +42,100 @@ public class BookingContainer implements ActionListener {
         addButton.addActionListener(this);
         clearButton.addActionListener(this);
         backButton.addActionListener(this);
+        bookingComboBox.addActionListener(this);
+    }
+
+    public void initializeComboBox() {
+        try {
+            final ResultSet patientsResult = bookingHelper.getAllPatients();
+            while (patientsResult.next()) {
+                patientsList.add(new String[]{patientsResult.getString(1), patientsResult.getString(2)});
+            }
+            final String[] resultList = patientsList.stream().map(array -> array[1]).toList().toArray(new String[patientsList.size()]);
+            final DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>(resultList);
+            bookingComboBox.setModel(comboBoxModel);
+            idPatientField.setText(patientsList.getFirst()[0]);
+        } catch (SQLException exception) {
+            System.err.println(exception.getMessage());
+        }
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == backButton) {
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == backButton) {
             App.getInstance().backToHome();
             return;
         }
 
-        if (e.getSource() == addButton) {
-            bookingHelper.insertData(inputField.getText().trim());
-            inputField.setText("");
-            this.getAllData();
-            logln("Sucessfully added patient", LoggingType.DEBUG);
-        } else if (e.getSource() == findButton) {
-            this.getDataById(inputField.getText().trim());
-            inputField.setText("");
-            if (!dataList.isEmpty()) {
-                logln("Booking found", LoggingType.DEBUG);
-            } else {
+        final String currentPatientId = idPatientField.getText().trim();
+        if (event.getSource() == addButton) {
+            bookingHelper.insertData(currentPatientId);
+        } else if (event.getSource() == findButton) {
+            if (this.dataList.size() == 1){
                 this.getAllData();
-                logln("Booking not found", LoggingType.DEBUG);
+                this.refreshTableModel();
+                return;
             }
-        } else if (e.getSource() == clearButton) {
+            final String findId = JOptionPane.showInputDialog("Masukkan nomor antrian:");
+            if (findId == null || findId.trim().equalsIgnoreCase("")) {
+                return;
+            }
+            this.getDataById(findId);
+            this.refreshTableModel();
+            idPatientField.setText("");
+            return;
+        } else if (event.getSource() == clearButton) {
             bookingHelper.deleteAllData();
             bookingHelper.resetAutoIncrement();
-            this.getAllData();
-            logln("Sucessfully cleared all patients", LoggingType.DEBUG);
+        } else if (event.getSource() == bookingComboBox) {
+            final String idPatient = patientsList.get(bookingComboBox.getSelectedIndex())[0];
+            idPatientField.setText(idPatient);
         }
-        this.refreshModel();
+        this.getAllData();
+        this.refreshTableModel();
     }
 
     public void getAllData() {
         try {
             dataList.clear();
-            final ResultSet patients = bookingHelper.getAllData();
-            while (patients.next()) {
-                final String[] row = new String[] {
-                    patients.getString("nomor_antrian"),
-                    patients.getString("id_pasien"),
-                    patients.getString("tanggal_pemesanan")
-                };
+            final ResultSet data = bookingHelper.getAllData();
+            while (data.next()) {
+                final String[] row = new String[]{
+                        data.getString("id_pemesanan"),
+                        data.getString("id_pasien"),
+                        data.getString("nama"),
+                        data.getString("tanggal_pemesanan")};
                 dataList.add(row);
             }
         } catch (SQLException e) {
-            logln(e.getMessage(), LoggingType.ERROR);
+            System.err.println(e.getMessage());
         }
     }
 
-    public void getDataById(String patientId) {
+    public void getDataById(String id) {
         try {
             dataList.clear();
-            final ResultSet patient = bookingHelper.getDataById(patientId);
-            if (patient.next()) {
-                final String[] row = new String[] {
-                        patient.getString("nomor_antrian"),
-                        patient.getString("id_pasien"),
-                        patient.getString("tanggal_pemesanan")
-                };
+            final ResultSet data = bookingHelper.getDataById(id);
+            if (data.next()) {
+                final String[] row = new String[]{
+                        data.getString("id_pemesanan"),
+                        data.getString("id_pasien"),
+                        data.getString("nama"),
+                        data.getString("tanggal_pemesanan")};
                 dataList.add(row);
             }
         } catch (SQLException e) {
-            logln(e.getMessage(), LoggingType.ERROR);
+            System.err.println(e.getMessage());
         }
     }
 
-    public void refreshModel() {
+    public void refreshTableModel() {
         final DefaultTableModel model = new DefaultTableModel();
         for (String column_name : columns) {
-            model.addColumn(null, new Object[]{column_name});
+            model.addColumn("Columns", new Object[]{column_name});
         }
-        for (String[] data : dataList) {
-            model.addRow(data);
+        for (String[] strings : dataList) {
+            model.addRow(strings);
         }
         table.setModel(model);
     }

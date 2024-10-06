@@ -1,12 +1,8 @@
 package src.utils;
 
-import src.enums.LoggingType;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import static src.utils.LoggingUtil.logln;
 
 public class ConnectionUtil {
     private Connection connection;
@@ -16,6 +12,7 @@ public class ConnectionUtil {
     public static ConnectionUtil getConnectionUtil() {
         return connectionUtil;
     }
+
     public Connection getConnection () {
         if (connection ==  null) {
             try {
@@ -23,9 +20,9 @@ public class ConnectionUtil {
                 final String USER = "postgres";
                 final String PASSWORD = "967832";
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                logln("Connection established", LoggingType.DEBUG);
+                System.out.println("Connection established");
             } catch (SQLException e) {
-                logln(e.getMessage(), LoggingType.ERROR);
+                System.err.println(e.getMessage());
             }
         }
         return connection;

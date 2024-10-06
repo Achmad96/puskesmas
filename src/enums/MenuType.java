@@ -1,7 +1,5 @@
 package src.enums;
 
 public enum MenuType {
-    BOOKING,
-    EXAMINATION,
-    PAYMENT
+    MEDICINE, HEALTH_WORKER, PATIENT, BOOKING, EXAMINATION, PAYMENT
 }
