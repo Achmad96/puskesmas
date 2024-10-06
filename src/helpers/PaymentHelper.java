@@ -12,14 +12,22 @@ public class PaymentHelper extends Helper {
     }
 
     public void insertData(String id, HashMap<String, Object> options, int jumlahObat) {
-        super.setTableName("pembayaran_obat");
-        super.insertData(id, options);
+        try {
+            this.getConnection().setAutoCommit(false);
+            super.setTableName("pembayaran_obat");
+            super.insertData(id, options);
 
-        super.setTableName("detail_pembayaran");
-        final HashMap<String, Object> detailOptions = new HashMap<>();
-        detailOptions.put("id_obat", options.get("id_obat"));
-        detailOptions.put("jumlah_obat", jumlahObat);
-        super.insertData(id, detailOptions);
+            super.setTableName("detail_pembayaran");
+            final HashMap<String, Object> detailOptions = new HashMap<>();
+            detailOptions.put("id_obat", options.get("id_obat"));
+            detailOptions.put("jumlah_obat", jumlahObat);
+            super.insertData(id, detailOptions);
+
+            this.getConnection().commit();
+            this.getConnection().setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override public ResultSet getAllData() {
@@ -72,17 +80,17 @@ public class PaymentHelper extends Helper {
 
     public void updateStock(String idObat, int jumlahObat) {
         try {
-            final String updateStockQuery = "UPDATE obat SET stok = stok + ? WHERE id = ?";
+            this.getConnection().setAutoCommit(false);
+            final String updateStockQuery = "UPDATE obat SET stok = stok - ? WHERE id = ?";
             final PreparedStatement preparedStatement = this.getConnection().prepareStatement(updateStockQuery);
 
-            preparedStatement.setInt(1, -jumlahObat);
+            preparedStatement.setInt(1, jumlahObat);
             preparedStatement.setString(2, idObat);
             preparedStatement.executeUpdate();
 
             this.getConnection().commit();
             this.getConnection().setAutoCommit(true);
             System.out.println("Stock updated successfully!");
-
         } catch (SQLException exception) {
             if (this.getConnection() != null) {
                 try {
