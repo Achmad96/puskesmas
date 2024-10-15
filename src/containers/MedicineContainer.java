@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -31,14 +33,21 @@ public class MedicineContainer implements ActionListener, ListSelectionListener 
 
     private final MedicineHelper medicineHelper = new MedicineHelper();
     private final ArrayList<String[]> dataList = new ArrayList<>();
-    private final String[] columns = {"ID OBAT", "NAMA", "STOK", "HARGA"};
+    private final String[] columns = {"Id", "Nama", "Stok", "Harga"};
 
     public MedicineContainer() {
+        boldingTheHeaders();
         initializeEvents();
 
         this.idField.setText(generateRandomID(10,"OBT"));
         this.getAllData();
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     public void initializeEvents() {
@@ -92,13 +101,8 @@ public class MedicineContainer implements ActionListener, ListSelectionListener 
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] data : dataList) {
-            model.addRow(data);
-        }
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 
@@ -118,14 +122,14 @@ public class MedicineContainer implements ActionListener, ListSelectionListener 
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (table.getSelectedRow() < 1) {
+        if (table.getSelectedRow() < 0) {
             return;
         }
         final int row = table.getSelectedRow();
         final Object selectedId = table.getValueAt(row, 0);
         idField.setText(selectedId.toString());
-        namaField.setText(dataList.get(row - 1)[1]);
-        stockField.setText(dataList.get(row - 1)[2]);
-        hargaField.setText(dataList.get(row - 1)[3]);
+        namaField.setText(dataList.get(row)[1]);
+        stockField.setText(dataList.get(row)[2]);
+        hargaField.setText(dataList.get(row)[3]);
     }
 }

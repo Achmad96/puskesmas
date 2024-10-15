@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -39,13 +41,14 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
     private final ButtonGroup buttonGroup = new ButtonGroup();
     private final ArrayList<String[]> dataList = new ArrayList<>();
     private final HealthWorkerHelper healthWorkerHelper = new HealthWorkerHelper();
-    private final String[] columns = {"id", "nama", "umur", "jenis_kelamin", "no_telp", "poli", "jenis_nakes"};
+    private final String[] columns = {"Id", "Nama", "Umur", "Jenis Kelamin", "Nomor Telepon", "Poli", "Jenis Nakes"};
 
     public JPanel getHealthWorkerPanel() {
         return healthWorkerPanel;
     }
 
     public HealthWorkerContainer() {
+        boldingTheHeaders();
         this.initializePoliComboBox();
         this.initializeJenisNakesComboBox();
         initializeRadioButtons();
@@ -54,6 +57,12 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
         this.idField.setText(generateRandomID("NAK"));
         this.getAllData();
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     public void initializeRadioButtons() {
@@ -106,13 +115,8 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] data : dataList) {
-            model.addRow(data);
-        }
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 
@@ -150,14 +154,14 @@ public class HealthWorkerContainer implements ActionListener, ListSelectionListe
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (table.getSelectedRow() < 1) {
+        if (table.getSelectedRow() < 0) {
             return;
         }
         final int row = table.getSelectedRow();
         final String selectedId = table.getValueAt(row, 0).toString();
         idField.setText(selectedId);
-        namaField.setText(dataList.get(row - 1)[1]);
-        umurField.setText(dataList.get(row - 1)[2]);
-        noTeleponField.setText(dataList.get(row - 1)[4]);
+        namaField.setText(dataList.get(row)[1]);
+        umurField.setText(dataList.get(row)[2]);
+        noTeleponField.setText(dataList.get(row)[4]);
     }
 }

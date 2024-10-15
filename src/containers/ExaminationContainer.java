@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,10 +44,11 @@ public class ExaminationContainer implements ActionListener, ListSelectionListen
     private final ArrayList<String[]> patientsList = new ArrayList<>();
     private final ArrayList<String[]> healthWorkersList = new ArrayList<>();
 
-    private final String[] columns = {"ID PEMERIKSAAN", "ID NAKES", "ID PASIEN", "KELUHAN", "DIAGNOSIS", "TINDAKAN", "RESEP OBAT"};
+    private final String[] columns = {"Id Pemeriksaan", "Id Nakes", "Id Pasien", "Keluhan", "Diagnosis", "Tindakan", "Resep Obat"};
 
 
     public ExaminationContainer() {
+        boldingTheHeaders();
         this.getAllData();
         initializeComboBox();
         initializeEvents();
@@ -54,6 +57,12 @@ public class ExaminationContainer implements ActionListener, ListSelectionListen
         this.idHealthWorkerField.setText(healthWorkersList.getFirst()[0]);
         this.idPatientField.setText(patientsList.getFirst()[0]);
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     private void initializeComboBox() {
@@ -105,9 +114,11 @@ public class ExaminationContainer implements ActionListener, ListSelectionListen
         } else if (e.getSource() == nakesComboBox) {
             String idNakes = healthWorkersList.get(nakesComboBox.getSelectedIndex())[0];
             idHealthWorkerField.setText(idNakes);
+            return;
         } else if (e.getSource() == pasienComboBox) {
             String idPasien = patientsList.get(pasienComboBox.getSelectedIndex())[0];
             idPatientField.setText(idPasien);
+            return;
         }
         this.getAllData();
         this.refreshTableModel();
@@ -170,13 +181,8 @@ public class ExaminationContainer implements ActionListener, ListSelectionListen
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] strings : dataList) {
-            model.addRow(strings);
-        }
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 
@@ -197,7 +203,7 @@ public class ExaminationContainer implements ActionListener, ListSelectionListen
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (table.getSelectedRow() < 1) {
+        if (table.getSelectedRow() < 0) {
             return;
         }
         final String selectedId = table.getValueAt(table.getSelectedRow(), 0).toString();

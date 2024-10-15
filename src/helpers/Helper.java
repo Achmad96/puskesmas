@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.HashMap;
 
 public class Helper {
-    private final Connection connection = ConnectionUtil.getConnectionUtil().getConnection();
+    private Connection connection;
     private String tableName;
 
     public Helper(String tableName) {
@@ -18,19 +18,20 @@ public class Helper {
         return connection;
     }
 
-    public String getTableName() {
-        return tableName;
-    }
-
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
+    public String getTableName() {
+        return tableName;
+    }
+
     public ResultSet getDataById(String id) {
         try {
+            this.createConnection();
             final String sql =
                     "SELECT * FROM " + tableName +
-                    " WHERE id = ?";
+                            " WHERE id = ?";
             final PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, id);
             ps.executeQuery();
@@ -39,11 +40,14 @@ public class Helper {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
             return null;
+        } finally {
+            this.closeConnection();
         }
     }
 
     public ResultSet getAllData() {
         try {
+            this.createConnection();
             final String sql = "SELECT * FROM " + tableName;
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             System.out.println(sql);
@@ -52,11 +56,14 @@ public class Helper {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
             return null;
+        } finally {
+            this.closeConnection();
         }
     }
 
     public void deleteDataById(String id) {
         try {
+            this.createConnection();
             final String sql = "DELETE FROM " + tableName + " WHERE id = ?";
             final PreparedStatement preparedStatement = connection.prepareStatement(sql);
             System.out.println(sql);
@@ -65,11 +72,14 @@ public class Helper {
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
+        } finally {
+            this.closeConnection();
         }
     }
 
     public void deleteAllData() {
         try {
+            this.createConnection();
             final String sql = "DELETE FROM " + tableName;
             final PreparedStatement ps = this.getConnection().prepareStatement(sql);
             System.out.println(sql);
@@ -77,11 +87,14 @@ public class Helper {
         } catch (SQLException exception) {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
+        } finally {
+            this.closeConnection();
         }
     }
 
     public void insertData(String id) {
         try {
+            this.createConnection();
             final String sql = "INSERT INTO " + tableName + "(id) VALUES (?)";
             final PreparedStatement ps = this.getConnection().prepareStatement(sql);
             System.out.println(sql);
@@ -90,11 +103,14 @@ public class Helper {
         } catch (SQLException exception) {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
+        } finally {
+            this.closeConnection();
         }
     }
 
     public void insertData(String id, HashMap<String, Object> options) {
         try {
+            this.createConnection();
             final StringBuilder stringBuilder = new StringBuilder(
                     "INSERT INTO " + tableName +
                             " (id " + ", ");
@@ -117,11 +133,14 @@ public class Helper {
         } catch (SQLException exception) {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
+        } finally {
+            this.closeConnection();
         }
     }
 
     public void updateData(String id, HashMap<String, Object> updateOptions) {
         try {
+            this.createConnection();
             final StringBuilder stringBuilder = new StringBuilder("UPDATE " + tableName + " SET ");
             updateOptions.forEach((key, value) -> {
                 if (!value.toString().trim().isEmpty()) {
@@ -145,6 +164,24 @@ public class Helper {
         } catch (SQLException exception) {
             System.err.println(exception.getMessage());
             JOptionPane.showMessageDialog(null, "Maaf, terjadi kesalahan!\n" + exception.getMessage());
+        } finally {
+            this.closeConnection();
+        }
+    }
+
+    public void createConnection() {
+        connection = ConnectionUtil.getConnection();
+    }
+
+    public void closeConnection() {
+        try {
+            if (!connection.isClosed()) {
+                connection.close();
+                System.out.println("Connection closed...");
+            }
+        } catch (SQLException exception) {
+            System.out.println("Failed to close the connection...");
+            exception.printStackTrace();
         }
     }
 }

@@ -5,6 +5,8 @@ import src.helpers.BookingHelper;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -22,18 +24,25 @@ public class BookingContainer implements ActionListener {
     private JButton backButton;
     private JComboBox<String> bookingComboBox;
 
-    private final String[] columns = {"NOMOR ANTRIAN", "ID PASIEN", "NAMA PASIEN", "TANGGAL PEMESANAN"};
+    private final String[] columns = {"Nomor Antrian", "Id Pasien", "Nama Pasien", "Tanggal Pemesanan"};
 
     private final BookingHelper bookingHelper = new BookingHelper();
     private final ArrayList<String[]> dataList = new ArrayList<>();
     private final ArrayList<String[]> patientsList = new ArrayList<>();
 
-
     public BookingContainer() {
+        boldingTheHeaders();
+
         initializeComboBox();
         intializeEvents();
         this.getAllData();
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     public void intializeEvents() {
@@ -89,6 +98,7 @@ public class BookingContainer implements ActionListener {
         } else if (event.getSource() == bookingComboBox) {
             final String idPatient = patientsList.get(bookingComboBox.getSelectedIndex())[0];
             idPatientField.setText(idPatient);
+            return;
         }
         this.getAllData();
         this.refreshTableModel();
@@ -129,13 +139,8 @@ public class BookingContainer implements ActionListener {
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] strings : dataList) {
-            model.addRow(strings);
-        }
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 

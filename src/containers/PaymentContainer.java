@@ -7,11 +7,14 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static src.utils.RandomGeneratedId.generateRandomID;
@@ -45,13 +48,14 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
     private final ArrayList<String[]> medicinesList = new ArrayList<>();
 
     private int stock = 0;
-    private int jumlahObat = 1;
+    private int jumlahObat = 0;
     private Double hargaObat = 0.0;
     private Double totalHarga = 0.0;
 
-    private final String[] columns = {"ID PEMBAYARAN", "ID KASIR", "ID PASIEN", "ID OBAT", "JUMLAH OBAT"};
+    private final String[] columns = {"Id Pembayaran", "Id Kasir", "Id Pasien", "Id Obat", "Jumlah Obat"};
 
     public PaymentContainer() {
+        boldingTheHeaders();
         initializeCashiers();
         initializePatients();
         initializeMedicines();
@@ -59,7 +63,7 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
         this.idKasirField.setText(cashiersList.getFirst()[0]);
         this.idPasienField.setText(patientsList.getFirst()[0]);
 
-        stock = Integer.parseInt(medicinesList.getFirst()[2]);
+        stock = Integer.parseInt(medicinesList.getFirst()[2]) - jumlahObat;
         hargaObat = Double.parseDouble(medicinesList.getFirst()[3]);
         totalHarga = jumlahObat * hargaObat;
         this.idObatField.setText(medicinesList.getFirst()[0]);
@@ -71,6 +75,12 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
         this.idPembayaranField.setText(generateRandomID("PBO"));
         this.getAllData();
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     public JPanel getPaymentPanel() {
@@ -188,8 +198,10 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
         final String idPembayaran = idPembayaranField.getText().trim();
         if (e.getSource() == addButton) {
             final String idObat = idObatField.getText().trim();
-            paymentHelper.insertData(idPembayaran, this.getOptions(), jumlahObat);
-            paymentHelper.updateStock(idObat, jumlahObat);
+            stock = paymentHelper.insertData(idPembayaran, this.getOptions(), idObat, jumlahObat);
+            jumlahObat = 0;
+            jumlahObatField.setText("0");
+            stockLabel.setText(String.valueOf(stock));
         } else if (e.getSource() == findButton) {
             if (this.dataList.size() == 1) {
                 this.getAllData();
@@ -208,28 +220,28 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
         } else if (e.getSource() == cashierComboBox) {
             final String idKasir = cashiersList.get(cashierComboBox.getSelectedIndex())[0];
             idKasirField.setText(idKasir);
+            return;
         } else if (e.getSource() == patientComboBox) {
             final String idPasien = patientsList.get(patientComboBox.getSelectedIndex())[0];
             idPasienField.setText(idPasien);
+            return;
         } else if (e.getSource() == medicineComboBox) {
             final String idObat = medicinesList.get(medicineComboBox.getSelectedIndex())[0];
             idObatField.setText(idObat);
-            stock = Integer.parseInt(medicinesList.get(medicineComboBox.getSelectedIndex())[2]);
+            stock = Integer.parseInt(medicinesList.get(medicineComboBox.getSelectedIndex())[2]) - jumlahObat;
             hargaObat = Double.parseDouble(medicinesList.get(medicineComboBox.getSelectedIndex())[3]);
             totalHarga = hargaObat * jumlahObat;
             stockLabel.setText(String.valueOf(stock));
             totalLabel.setText("Rp. " + totalHarga);
+            return;
         }
         this.getAllData();
         this.refreshTableModel();
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] data : dataList) model.addRow(data);
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 
@@ -274,14 +286,14 @@ public class PaymentContainer implements ActionListener, KeyListener, ListSelect
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (table.getSelectedRow() < 1) {
+        if (table.getSelectedRow() < 0) {
             return;
         }
         final int row = table.getSelectedRow();
         final String selectedId = table.getValueAt(row, 0).toString();
         idPembayaranField.setText(selectedId);
-        idKasirField.setText(dataList.get(row - 1)[1]);
-        idPasienField.setText(dataList.get(row - 1)[2]);
-        idObatField.setText(dataList.get(row - 1)[3]);
+        idKasirField.setText(dataList.get(row)[1]);
+        idPasienField.setText(dataList.get(row)[2]);
+        idObatField.setText(dataList.get(row)[3]);
     }
 }

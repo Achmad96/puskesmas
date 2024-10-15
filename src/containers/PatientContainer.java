@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -37,14 +39,21 @@ public class PatientContainer implements ActionListener, ListSelectionListener {
     private final ButtonGroup buttonGroup = new ButtonGroup();
     private final ArrayList<String[]> dataList = new ArrayList<>();
 
-    private final String[] columns = {"ID PASIEN", "NAMA", "UMUR", "NOMER TELEPON", "ALAMAT", "JENIS KELAMIN"};
+    private final String[] columns = {"Id", "Nama", "Umur", "Nomor Telepon", "Alamat", "Jenis Kelamin"};
 
     public PatientContainer() {
+        boldingTheHeaders();
         idField.setText(generateRandomID("PAS"));
         initializeRadioButtons();
         initializeEvents();
         this.getAllData();
         this.refreshTableModel();
+    }
+
+    private void boldingTheHeaders() {
+        final JTableHeader jTableHeader = table.getTableHeader();
+        jTableHeader.setFont(new Font("Serif", Font.BOLD, 15));
+        table.setTableHeader(jTableHeader);
     }
 
     public void initializeEvents() {
@@ -102,13 +111,8 @@ public class PatientContainer implements ActionListener, ListSelectionListener {
     }
 
     public void refreshTableModel() {
-        final DefaultTableModel model = new DefaultTableModel();
-        for (String column_name : columns) {
-            model.addColumn("Columns", new Object[]{column_name});
-        }
-        for (String[] data : dataList) {
-            model.addRow(data);
-        }
+        final Object[][] array2D = new Object[dataList.size()][];
+        final DefaultTableModel model = new DefaultTableModel(dataList.toArray(array2D), columns);
         table.setModel(model);
     }
 
@@ -129,15 +133,15 @@ public class PatientContainer implements ActionListener, ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (table.getSelectedRow() < 1) {
+        if (table.getSelectedRow() < 0) {
             return;
         }
         final int row = table.getSelectedRow();
         final String selectedId = table.getValueAt(row, 0).toString();
         idField.setText(selectedId);
-        namaField.setText(dataList.get(row - 1)[1]);
-        umurField.setText(dataList.get(row - 1)[2]);
-        nomorTeleponField.setText(dataList.get(row - 1)[3]);
-        alamatField.setText(dataList.get(row - 1)[4]);
+        namaField.setText(dataList.get(row)[1]);
+        umurField.setText(dataList.get(row)[2]);
+        nomorTeleponField.setText(dataList.get(row)[3]);
+        alamatField.setText(dataList.get(row)[4]);
     }
 }
